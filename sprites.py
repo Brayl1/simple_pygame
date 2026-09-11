@@ -1,89 +1,132 @@
 """
-Simple pixel-art monster sprites.
+Monster sprite image loader.
 
-No image files are needed -- each monster is drawn on a Tkinter Canvas as a
-grid of colored squares, so the game runs anywhere Python + Tkinter runs.
+Each monster uses its own pixel-art PNG image
+stored inside assets/monsters/.
 
-Each template is a 9x9 grid of characters:
-    '.'  -> empty / transparent
-    'X'  -> body pixel (filled with the monster's rarity color)
-    'O'  -> eye pixel (always white, for contrast)
-
-Which template a monster uses is picked deterministically from its name
-(same name always renders the same shape), so monsters that share a rarity
-(and therefore a color) still look different from each other.
+The images are resized using NEAREST so the
+pixel-art style stays sharp.
 """
 
-PIXEL_TEMPLATES = [
-    # 0: Round
-    [
-        "...XXX...",
-        "..XXXXX..",
-        ".XXXXXXX.",
-        "XXXOXOXXX",
-        "XXXXXXXXX",
-        "XXXXXXXXX",
-        ".XXXXXXX.",
-        "..XXXXX..",
-        "...X.X...",
-    ],
-    # 1: Horned
-    [
-        "..X...X..",
-        ".XX...XX.",
-        "..XXXXX..",
-        ".XXXXXXX.",
-        "XXXOXOXXX",
-        "XXXXXXXXX",
-        ".XXXXXXX.",
-        "..XXXXX..",
-        "...X.X...",
-    ],
-    # 2: Wide
-    [
-        "XXXXXXXXX",
-        "XXXXXXXXX",
-        "XXOXXXOXX",
-        "XXXXXXXXX",
-        "XXXXXXXXX",
-        "XXXXXXXXX",
-        ".XXXXXXX.",
-        "..XXXXX..",
-        "...X.X...",
-    ],
-    # 3: Tall / slender
-    [
-        "...XXX...",
-        "...XXX...",
-        "..XXXXX..",
-        "..XOXOX..",
-        "..XXXXX..",
-        "..XXXXX..",
-        "..XXXXX..",
-        "...XXX...",
-        "....X....",
-    ],
-]
+from PIL import Image, ImageTk
 
 
-def get_template_index(name):
-    """Deterministic shape choice based on the monster's name."""
-    return sum(ord(ch) for ch in name) % len(PIXEL_TEMPLATES)
+# =========================================================
+# MONSTER IMAGE PATHS
+# =========================================================
+
+MONSTER_IMAGES = {
+    "Leafling": "assets/monsters/m1.png",
+    "Flameling": "assets/monsters/m2.png",
+    "Aquafin": "assets/monsters/m3.png",
+    "Voltwing": "assets/monsters/m4.png",
+    "Rockhorn": "assets/monsters/m5.png",
+    "Shadowfang": "assets/monsters/m6.png",
+    "Sandcoil": "assets/monsters/m7.png",
+    "Frostail": "assets/monsters/m8.png",
+    "Stormtail": "assets/monsters/m9.png",
+}
 
 
-def draw_monster(canvas, top_x, top_y, color, template_index, pixel_size=16):
-    """Draw one pixel-monster onto `canvas` with its top-left at (top_x, top_y)."""
-    grid = PIXEL_TEMPLATES[template_index % len(PIXEL_TEMPLATES)]
+# =========================================================
+# LOAD MONSTER IMAGE
+# =========================================================
 
-    for row_index, row in enumerate(grid):
-        for col_index, char in enumerate(row):
-            if char == ".":
-                continue
+def load_monster_image(name, size):
+    """
+    Load a monster PNG and resize it while preserving
+    its aspect ratio.
 
-            x1 = top_x + col_index * pixel_size
-            y1 = top_y + row_index * pixel_size
-            x2 = x1 + pixel_size
-            y2 = y1 + pixel_size
+    Returns an ImageTk.PhotoImage.
+    """
 
-            fill = "white" if char == "O" else color
-            canvas.create_rectangle(x1, y1, x2, y2, fill=fill, outline=fill)
+    image_path = MONSTER_IMAGES.get(name)
+
+    if image_path is None:
+        return None
+
+    try:
+        image = Image.open(image_path).convert("RGBA")
+
+    except FileNotFoundError:
+        print(
+            f"Monster image not found: {image_path}"
+        )
+        return None
+
+    # -----------------------------------------------------
+    # PRESERVE ASPECT RATIO
+    # -----------------------------------------------------
+
+    original_width, original_height = image.size
+
+    if original_width <= 0 or original_height <= 0:
+        return None
+
+    scale = min(
+        size / original_width,
+        size / original_height
+    )
+
+    new_width = max(
+        1,
+        int(original_width * scale)
+    )
+
+    new_height = max(
+        1,
+        int(original_height * scale)
+    )
+
+    # NEAREST keeps pixel art sharp
+    image = image.resize(
+        (new_width, new_height),
+        Image.Resampling.NEAREST
+    )
+
+    return ImageTk.PhotoImage(image)
+
+
+# =========================================================
+# DRAW MONSTER
+# =========================================================
+
+def draw_monster(canvas, name, size=144):
+    """
+    Draw a monster image centered on the given canvas.
+    """
+
+    canvas.delete("all")
+
+    photo = load_monster_image(
+        name,
+        size
+    )
+
+    if photo is None:
+
+        # Fallback message if image is missing
+        canvas.create_text(
+            size // 2,
+            size // 2,
+            text="NO IMAGE",
+            fill="white",
+            font=("Arial", 10, "bold")
+        )
+
+        return
+
+    # -----------------------------------------------------
+    # CENTER IMAGE
+    # -----------------------------------------------------
+
+    canvas.create_image(
+        size // 2,
+        size // 2,
+        image=photo,
+        anchor="center"
+    )
+
+    # VERY IMPORTANT:
+    # Keep a reference or Tkinter may delete the image.
+    canvas.monster_photo = photo

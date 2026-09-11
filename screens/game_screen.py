@@ -9,7 +9,7 @@ from PIL import Image, ImageTk
 
 import sprites
 
-from constants import RARITY_COLORS, SPRITE_PIXEL_SIZE
+from constants import SPRITE_PIXEL_SIZE
 
 
 SPRITE_CANVAS_SIZE = 9 * SPRITE_PIXEL_SIZE
@@ -95,7 +95,6 @@ def build(app):
 
         # -----------------------------------------------
         # COVER IMAGE
-        # Keeps aspect ratio and fills the whole window.
         # -----------------------------------------------
 
         scale = max(
@@ -103,8 +102,13 @@ def build(app):
             height / image_height
         )
 
-        new_width = int(image_width * scale)
-        new_height = int(image_height * scale)
+        new_width = int(
+            image_width * scale
+        )
+
+        new_height = int(
+            image_height * scale
+        )
 
         resized = original_bg.resize(
             (new_width, new_height),
@@ -129,12 +133,21 @@ def build(app):
         bottom = top + height
 
         resized = resized.crop(
-            (left, top, right, bottom)
+            (
+                left,
+                top,
+                right,
+                bottom
+            )
         )
 
-        bg_photo = ImageTk.PhotoImage(resized)
+        bg_photo = ImageTk.PhotoImage(
+            resized
+        )
 
-        canvas.delete("background")
+        canvas.delete(
+            "background"
+        )
 
         canvas.create_image(
             0,
@@ -146,7 +159,9 @@ def build(app):
 
         canvas.bg_photo = bg_photo
 
-        canvas.tag_lower("background")
+        canvas.tag_lower(
+            "background"
+        )
 
     # =====================================================
     # TOP INFORMATION
@@ -313,7 +328,7 @@ def build(app):
     )
 
     # =====================================================
-    # CAPTURE
+    # CAPTURE BUTTON
     # =====================================================
 
     w["capture_button"] = tk.Button(
@@ -331,7 +346,7 @@ def build(app):
     )
 
     # =====================================================
-    # SKIP
+    # SKIP BUTTON
     # =====================================================
 
     w["skip_button"] = tk.Button(
@@ -349,7 +364,7 @@ def build(app):
     )
 
     # =====================================================
-    # RARE CANDY
+    # RARE CANDY BUTTON
     # =====================================================
 
     w["candy_button"] = tk.Button(
@@ -408,59 +423,93 @@ def build(app):
     # =====================================================
 
     def hover(button, color):
-        button.config(bg=color)
+        button.config(
+            bg=color
+        )
 
     def leave(button, color):
-        button.config(bg=color)
+        button.config(
+            bg=color
+        )
 
     w["capture_button"].bind(
         "<Enter>",
-        lambda e: hover(w["capture_button"], CAPTURE_HOVER)
+        lambda e: hover(
+            w["capture_button"],
+            CAPTURE_HOVER
+        )
     )
 
     w["capture_button"].bind(
         "<Leave>",
-        lambda e: leave(w["capture_button"], CAPTURE_COLOR)
+        lambda e: leave(
+            w["capture_button"],
+            CAPTURE_COLOR
+        )
     )
 
     w["skip_button"].bind(
         "<Enter>",
-        lambda e: hover(w["skip_button"], SKIP_HOVER)
+        lambda e: hover(
+            w["skip_button"],
+            SKIP_HOVER
+        )
     )
 
     w["skip_button"].bind(
         "<Leave>",
-        lambda e: leave(w["skip_button"], SKIP_COLOR)
+        lambda e: leave(
+            w["skip_button"],
+            SKIP_COLOR
+        )
     )
 
     w["candy_button"].bind(
         "<Enter>",
-        lambda e: hover(w["candy_button"], CANDY_HOVER)
+        lambda e: hover(
+            w["candy_button"],
+            CANDY_HOVER
+        )
     )
 
     w["candy_button"].bind(
         "<Leave>",
-        lambda e: leave(w["candy_button"], CANDY_COLOR)
+        lambda e: leave(
+            w["candy_button"],
+            CANDY_COLOR
+        )
     )
 
     collection_button.bind(
         "<Enter>",
-        lambda e: hover(collection_button, NAV_HOVER)
+        lambda e: hover(
+            collection_button,
+            NAV_HOVER
+        )
     )
 
     collection_button.bind(
         "<Leave>",
-        lambda e: leave(collection_button, NAV_COLOR)
+        lambda e: leave(
+            collection_button,
+            NAV_COLOR
+        )
     )
 
     history_button.bind(
         "<Enter>",
-        lambda e: hover(history_button, NAV_HOVER)
+        lambda e: hover(
+            history_button,
+            NAV_HOVER
+        )
     )
 
     history_button.bind(
         "<Leave>",
-        lambda e: leave(history_button, NAV_COLOR)
+        lambda e: leave(
+            history_button,
+            NAV_COLOR
+        )
     )
 
     # =====================================================
@@ -479,7 +528,10 @@ def build(app):
         # BACKGROUND
         # -----------------------------------------------
 
-        draw_background(width, height)
+        draw_background(
+            width,
+            height
+        )
 
         # -----------------------------------------------
         # RESPONSIVE SCALE
@@ -495,7 +547,10 @@ def build(app):
 
         scale = max(
             0.75,
-            min(scale, 1.6)
+            min(
+                scale,
+                1.6
+            )
         )
 
         # =================================================
@@ -508,17 +563,26 @@ def build(app):
         )
 
         w["trainer_label"].config(
-            font=(PIXEL_FONT, top_font)
+            font=(
+                PIXEL_FONT,
+                top_font
+            )
         )
 
         w["score_label"].config(
-            font=(PIXEL_FONT, top_font)
+            font=(
+                PIXEL_FONT,
+                top_font
+            )
         )
 
         w["status_label"].config(
             font=(
                 PIXEL_FONT,
-                max(6, int(7 * scale))
+                max(
+                    6,
+                    int(7 * scale)
+                )
             )
         )
 
@@ -547,7 +611,10 @@ def build(app):
         w["round_label"].config(
             font=(
                 PIXEL_FONT,
-                max(8, int(10 * scale))
+                max(
+                    8,
+                    int(10 * scale)
+                )
             )
         )
 
@@ -621,28 +688,40 @@ def build(app):
         w["monster_name_label"].config(
             font=(
                 PIXEL_FONT,
-                max(10, int(14 * scale))
+                max(
+                    10,
+                    int(14 * scale)
+                )
             )
         )
 
         w["rarity_label"].config(
             font=(
                 PIXEL_FONT,
-                max(6, int(8 * scale))
+                max(
+                    6,
+                    int(8 * scale)
+                )
             )
         )
 
         w["ability_label"].config(
             font=(
                 PIXEL_FONT,
-                max(6, int(8 * scale))
+                max(
+                    6,
+                    int(8 * scale)
+                )
             )
         )
 
         w["difficulty_label"].config(
             font=(
                 PIXEL_FONT,
-                max(6, int(8 * scale))
+                max(
+                    6,
+                    int(8 * scale)
+                )
             )
         )
 
@@ -653,7 +732,10 @@ def build(app):
         w["result_label"].config(
             font=(
                 PIXEL_FONT,
-                max(7, int(9 * scale))
+                max(
+                    7,
+                    int(9 * scale)
+                )
             )
         )
 
@@ -673,17 +755,26 @@ def build(app):
         )
 
         w["capture_button"].config(
-            font=(PIXEL_FONT, button_font)
+            font=(
+                PIXEL_FONT,
+                button_font
+            )
         )
 
         w["skip_button"].config(
-            font=(PIXEL_FONT, button_font)
+            font=(
+                PIXEL_FONT,
+                button_font
+            )
         )
 
         w["candy_button"].config(
             font=(
                 PIXEL_FONT,
-                max(6, int(7 * scale))
+                max(
+                    6,
+                    int(7 * scale)
+                )
             )
         )
 
@@ -691,16 +782,6 @@ def build(app):
             relx=0.5,
             y=420 * scale,
             anchor="n"
-        )
-
-        button_width = max(
-            130,
-            int(170 * scale)
-        )
-
-        button_height = max(
-            45,
-            int(55 * scale)
         )
 
         w["capture_button"].grid(
@@ -740,14 +821,20 @@ def build(app):
         collection_button.config(
             font=(
                 PIXEL_FONT,
-                max(6, int(7 * scale))
+                max(
+                    6,
+                    int(7 * scale)
+                )
             )
         )
 
         history_button.config(
             font=(
                 PIXEL_FONT,
-                max(6, int(7 * scale))
+                max(
+                    6,
+                    int(7 * scale)
+                )
             )
         )
 
@@ -774,7 +861,9 @@ def build(app):
     def on_resize(event):
 
         if event.widget == root:
-            update_layout(event)
+            update_layout(
+                event
+            )
 
     root.bind(
         "<Configure>",
@@ -807,7 +896,10 @@ def advance_round(app):
     monster = game.start_next_encounter()
 
     app.widgets["round_label"].config(
-        text="Round: " + str(game.round_number)
+        text=(
+            "Round: "
+            + str(game.round_number)
+        )
     )
 
     _render_monster(
@@ -828,11 +920,21 @@ def advance_round(app):
     )
 
     app.widgets["candy_button"].config(
-        state=("normal" if game.candies else "disabled")
+        state=(
+            "normal"
+            if game.candies
+            else "disabled"
+        )
     )
 
-    _update_status(app)
+    _update_status(
+        app
+    )
 
+
+# =========================================================
+# RENDER MONSTER
+# =========================================================
 
 def _render_monster(app, monster):
 
@@ -845,56 +947,71 @@ def _render_monster(app, monster):
     )
 
     w["rarity_label"].config(
-        text="Rarity: " + rarity
+        text=(
+            "Rarity: "
+            + rarity
+        )
     )
 
     w["ability_label"].config(
-        text="Ability: " + ability
+        text=(
+            "Ability: "
+            + ability
+        )
     )
 
     w["difficulty_label"].config(
-        text="Capture Difficulty: " + str(difficulty)
+        text=(
+            "Capture Difficulty: "
+            + str(difficulty)
+        )
     )
 
     canvas = w["sprite_canvas"]
 
-    canvas.delete("all")
-
-    color = RARITY_COLORS.get(
-        rarity,
-        "#777777"
-    )
-
-    template_index = sprites.get_template_index(
-        name
-    )
+    # =====================================================
+    # DRAW PNG MONSTER
+    # =====================================================
 
     sprites.draw_monster(
         canvas,
-        0,
-        0,
-        color,
-        template_index
+        name,
+        SPRITE_CANVAS_SIZE
     )
 
+
+# =========================================================
+# UPDATE STATUS
+# =========================================================
 
 def _update_status(app):
 
     game = app.game
 
     app.widgets["score_label"].config(
-        text="Score: " + str(game.score)
+        text=(
+            "Score: "
+            + str(game.score)
+        )
     )
 
     app.widgets["status_label"].config(
         text=(
             "Orbs: "
-            + str(len(game.inventory))
+            + str(
+                len(game.inventory)
+            )
             + "   Candy: "
-            + str(len(game.candies))
+            + str(
+                len(game.candies)
+            )
         )
     )
 
+
+# =========================================================
+# USE CANDY
+# =========================================================
 
 def _use_candy(app):
 
@@ -906,15 +1023,24 @@ def _use_candy(app):
         )
 
         app.widgets["result_label"].config(
-            text="Rare Candy used! Difficulty lowered."
+            text=(
+                "Rare Candy used! "
+                "Difficulty lowered."
+            )
         )
 
         app.widgets["candy_button"].config(
             state="disabled"
         )
 
-        _update_status(app)
+        _update_status(
+            app
+        )
 
+
+# =========================================================
+# ATTEMPT CAPTURE
+# =========================================================
 
 def _attempt_capture(app):
 
@@ -945,15 +1071,25 @@ def _attempt_capture(app):
             )
         )
 
-    _update_status(app)
+    _update_status(
+        app
+    )
 
-    _lock_buttons(app)
+    _lock_buttons(
+        app
+    )
 
     app.root.after(
         1500,
-        lambda: advance_round(app)
+        lambda: advance_round(
+            app
+        )
     )
 
+
+# =========================================================
+# SKIP
+# =========================================================
 
 def _skip(app):
 
@@ -964,16 +1100,27 @@ def _skip(app):
     game.skip_current()
 
     app.widgets["result_label"].config(
-        text=name + " was skipped."
+        text=(
+            name
+            + " was skipped."
+        )
     )
 
-    _lock_buttons(app)
+    _lock_buttons(
+        app
+    )
 
     app.root.after(
         1200,
-        lambda: advance_round(app)
+        lambda: advance_round(
+            app
+        )
     )
 
+
+# =========================================================
+# LOCK BUTTONS
+# =========================================================
 
 def _lock_buttons(app):
 

@@ -14,8 +14,7 @@ import sprites
 from constants import RARITY_ORDER, RARITY_COLORS
 
 
-ROW_PIXEL_SIZE = 6
-ROW_ICON_SIZE = 9 * ROW_PIXEL_SIZE
+ROW_ICON_SIZE = 80
 
 
 # =========================================================
@@ -799,17 +798,12 @@ def _build_row(inner_frame, monster):
         "#777777"
     )
 
-    template_index = sprites.get_template_index(
-        name
-    )
-
+    # Draw the monster's PNG image using sprites.py.
+    # The same image used on the battle screen is shown here.
     sprites.draw_monster(
         icon,
-        0,
-        0,
-        color,
-        template_index,
-        pixel_size=ROW_PIXEL_SIZE
+        name,
+        ROW_ICON_SIZE
     )
 
     # -----------------------------------------------
