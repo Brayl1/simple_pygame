@@ -323,17 +323,17 @@ def build(app):
     # =====================================================
 
     w["capture_button"] = tk.Button(
-        root,
-        text="CAPTURE",
-        font=(PIXEL_FONT, 8),
-        fg=WHITE,
-        bg=CAPTURE_COLOR,
-        activebackground=CAPTURE_HOVER,
-        activeforeground=WHITE,
-        relief="raised",
-        bd=5,
-        cursor="hand2",
-        command=lambda: _attempt_capture(app)
+    root,
+    text="CAPTURE",
+    font=(PIXEL_FONT, 8),
+    fg=BROWN,
+    bg=CAPTURE_COLOR,
+    activebackground=CAPTURE_HOVER,
+    activeforeground=BROWN,
+    relief="raised",
+    bd=5,
+    cursor="hand2",
+    command=lambda: _attempt_capture(app)
     )
 
     # =====================================================
@@ -341,17 +341,17 @@ def build(app):
     # =====================================================
 
     w["skip_button"] = tk.Button(
-        root,
-        text="SKIP",
-        font=(PIXEL_FONT, 8),
-        fg=WHITE,
-        bg=SKIP_COLOR,
-        activebackground=SKIP_HOVER,
-        activeforeground=WHITE,
-        relief="raised",
-        bd=5,
-        cursor="hand2",
-        command=lambda: _skip(app)
+    root,
+    text="SKIP",
+    font=(PIXEL_FONT, 8),
+    fg=BROWN,
+    bg=SKIP_COLOR,
+    activebackground=SKIP_HOVER,
+    activeforeground=BROWN,
+    relief="raised",
+    bd=5,
+    cursor="hand2",
+    command=lambda: _skip(app)
     )
 
     # =====================================================
@@ -359,17 +359,17 @@ def build(app):
     # =====================================================
 
     w["candy_button"] = tk.Button(
-        root,
-        text="USE RARE CANDY",
-        font=(PIXEL_FONT, 7),
-        fg=WHITE,
-        bg=CANDY_COLOR,
-        activebackground=CANDY_HOVER,
-        activeforeground=WHITE,
-        relief="raised",
-        bd=5,
-        cursor="hand2",
-        command=lambda: _use_candy(app)
+    root,
+    text="USE RARE CANDY",
+    font=(PIXEL_FONT, 7),
+    fg=BROWN,
+    bg=CANDY_COLOR,
+    activebackground=CANDY_HOVER,
+    activeforeground=BROWN,
+    relief="raised",
+    bd=5,
+    cursor="hand2",
+    command=lambda: _use_candy(app)
     )
 
     # =====================================================
@@ -377,31 +377,31 @@ def build(app):
     # =====================================================
 
     collection_button = tk.Button(
-        root,
-        text="COLLECTION",
-        font=(PIXEL_FONT, 7),
-        fg=WHITE,
-        bg=NAV_COLOR,
-        activebackground=NAV_HOVER,
-        activeforeground=WHITE,
-        relief="raised",
-        bd=4,
-        cursor="hand2",
-        command=app.open_collection
+    root,
+    text="COLLECTION",
+    font=(PIXEL_FONT, 7),
+    fg=BROWN,
+    bg=NAV_COLOR,
+    activebackground=NAV_HOVER,
+    activeforeground=BROWN,
+    relief="raised",
+    bd=4,
+    cursor="hand2",
+    command=app.open_collection
     )
 
     history_button = tk.Button(
-        root,
-        text="HISTORY",
-        font=(PIXEL_FONT, 7),
-        fg=WHITE,
-        bg=NAV_COLOR,
-        activebackground=NAV_HOVER,
-        activeforeground=WHITE,
-        relief="raised",
-        bd=4,
-        cursor="hand2",
-        command=app.open_history
+    root,
+    text="HISTORY",
+    font=(PIXEL_FONT, 7),
+    fg=BROWN,
+    bg=NAV_COLOR,
+    activebackground=NAV_HOVER,
+    activeforeground=BROWN,
+    relief="raised",
+    bd=4,
+    cursor="hand2",
+    command=app.open_history
     )
 
     # =====================================================
