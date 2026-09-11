@@ -319,20 +319,11 @@ def build(app):
     )
 
     # =====================================================
-    # ACTION BUTTON FRAME
-    # =====================================================
-
-    action_frame = tk.Frame(
-        root,
-        bg=""
-    )
-
-    # =====================================================
     # CAPTURE BUTTON
     # =====================================================
 
     w["capture_button"] = tk.Button(
-        action_frame,
+        root,
         text="CAPTURE",
         font=(PIXEL_FONT, 8),
         fg=BROWN,
@@ -350,7 +341,7 @@ def build(app):
     # =====================================================
 
     w["skip_button"] = tk.Button(
-        action_frame,
+        root,
         text="SKIP",
         font=(PIXEL_FONT, 8),
         fg=WHITE,
@@ -368,7 +359,7 @@ def build(app):
     # =====================================================
 
     w["candy_button"] = tk.Button(
-        action_frame,
+        root,
         text="USE RARE CANDY",
         font=(PIXEL_FONT, 7),
         fg=WHITE,
@@ -385,13 +376,8 @@ def build(app):
     # NAVIGATION
     # =====================================================
 
-    nav_frame = tk.Frame(
-        root,
-        bg=""
-    )
-
     collection_button = tk.Button(
-        nav_frame,
+        root,
         text="COLLECTION",
         font=(PIXEL_FONT, 7),
         fg=WHITE,
@@ -405,7 +391,7 @@ def build(app):
     )
 
     history_button = tk.Button(
-        nav_frame,
+        root,
         text="HISTORY",
         font=(PIXEL_FONT, 7),
         fg=WHITE,
@@ -778,45 +764,40 @@ def build(app):
             )
         )
 
-        action_frame.place(
+        # Place the buttons directly on the root instead of inside a moving
+        # Frame.  This avoids Windows/Tkinter repaint ghosts while resizing.
+        action_y = 420 * scale
+        gap = 8 * scale
+
+        w["skip_button"].place(
             relx=0.5,
-            y=420 * scale,
-            anchor="n"
+            y=action_y,
+            anchor="n",
+            width=max(100, int(110 * scale)),
+            height=max(48, int(52 * scale))
         )
 
-        w["capture_button"].grid(
-            row=0,
-            column=0,
-            padx=int(6 * scale),
-            ipadx=5,
-            ipady=5
+        w["capture_button"].place(
+            relx=0.5,
+            x=-(max(100, int(110 * scale)) / 2 + gap),
+            y=action_y,
+            anchor="ne",
+            width=max(145, int(155 * scale)),
+            height=max(48, int(52 * scale))
         )
 
-        w["skip_button"].grid(
-            row=0,
-            column=1,
-            padx=int(6 * scale),
-            ipadx=5,
-            ipady=5
-        )
-
-        w["candy_button"].grid(
-            row=0,
-            column=2,
-            padx=int(6 * scale),
-            ipadx=5,
-            ipady=5
+        w["candy_button"].place(
+            relx=0.5,
+            x=(max(100, int(110 * scale)) / 2 + gap),
+            y=action_y,
+            anchor="nw",
+            width=max(200, int(220 * scale)),
+            height=max(48, int(52 * scale))
         )
 
         # =================================================
         # NAVIGATION
         # =================================================
-
-        nav_frame.place(
-            relx=0.5,
-            y=510 * scale,
-            anchor="n"
-        )
 
         collection_button.config(
             font=(
@@ -838,46 +819,62 @@ def build(app):
             )
         )
 
-        collection_button.grid(
-            row=0,
-            column=0,
-            padx=int(6 * scale),
-            ipadx=int(8 * scale),
-            ipady=int(5 * scale)
+        nav_y = 510 * scale
+        nav_gap = 8 * scale
+        nav_width = max(165, int(180 * scale))
+        nav_height = max(46, int(50 * scale))
+
+        collection_button.place(
+            relx=0.5,
+            x=-nav_gap / 2,
+            y=nav_y,
+            anchor="ne",
+            width=nav_width,
+            height=nav_height
         )
 
-        history_button.grid(
-            row=0,
-            column=1,
-            padx=int(6 * scale),
-            ipadx=int(8 * scale),
-            ipady=int(5 * scale)
+        history_button.place(
+            relx=0.5,
+            x=nav_gap / 2,
+            y=nav_y,
+            anchor="nw",
+            width=nav_width,
+            height=nav_height
         )
 
     # =====================================================
     # RESIZE EVENT
     # =====================================================
 
+    # <Configure> can fire many times per second while the user drags the
+    # window border.  Redrawing the PIL background on every event can leave
+    # temporary "ghost" copies of native Tk buttons on Windows.  Debounce
+    # the event and redraw only after resizing pauses briefly.
+    resize_job = None
+
     def on_resize(event):
+        nonlocal resize_job
 
-        if event.widget == root:
-            update_layout(
-                event
-            )
+        if event.widget != root:
+            return
 
-    root.bind(
-        "<Configure>",
-        on_resize
-    )
+        if resize_job is not None:
+            try:
+                root.after_cancel(resize_job)
+            except tk.TclError:
+                pass
+
+        resize_job = root.after(60, update_layout)
+
+    # Make sure this screen owns the root resize binding.
+    root.unbind("<Configure>")
+    root.bind("<Configure>", on_resize)
 
     # =====================================================
     # INITIAL LAYOUT
     # =====================================================
 
-    root.after(
-        100,
-        update_layout
-    )
+    root.after(100, update_layout)
 
 
 # =========================================================
