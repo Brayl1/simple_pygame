@@ -9,10 +9,10 @@ from PIL import Image, ImageTk
 
 import sprites
 
-from constants import SPRITE_PIXEL_SIZE
-
-
-SPRITE_CANVAS_SIZE = 9 * SPRITE_PIXEL_SIZE
+# Larger canvas dedicated to animated GIF monsters.
+# This is intentionally independent from the old 9x9 pixel-sprite size.
+SPRITE_CANVAS_SIZE = 320
+MONSTER_DRAW_SIZE = 300
 
 
 def build(app):
@@ -650,24 +650,83 @@ def build(app):
         # SPRITE
         # =================================================
 
+        # Keep the monster canvas INSIDE the LabelFrame borders.
+        # The old minimum of 250 px could be taller than the panel itself,
+        # which caused the canvas to cover the top/bottom frame border.
+        inner_height = max(
+            140,
+            panel_height - int(55 * scale)
+        )
+
+        left_area_width = max(
+            180,
+            int(panel_width * 0.40)
+        )
+
+        responsive_sprite_canvas = min(
+            int(300 * scale),
+            inner_height,
+            left_area_width
+        )
+
+        responsive_sprite_canvas = max(
+            140,
+            responsive_sprite_canvas
+        )
+
         sprite_canvas.config(
-            width=SPRITE_CANVAS_SIZE,
-            height=SPRITE_CANVAS_SIZE
+            width=responsive_sprite_canvas,
+            height=responsive_sprite_canvas
         )
 
         sprite_canvas.place(
-            x=35 * scale,
-            rely=0.5,
-            anchor="w"
+            x=max(18, int(24 * scale)),
+            rely=0.52,
+            anchor="w",
+            width=responsive_sprite_canvas,
+            height=responsive_sprite_canvas
         )
+
+        # Leave a little breathing room inside the canvas so wide/tall
+        # monsters such as Frostail do not touch the panel border.
+        new_sprite_size = max(
+            125,
+            responsive_sprite_canvas - max(18, int(24 * scale))
+        )
+
+        w["current_sprite_size"] = new_sprite_size
+
+        # -------------------------------------------------
+        # RESIZE THE CURRENT GIF TOO
+        # -------------------------------------------------
+        # Changing the Canvas size alone does not resize an
+        # already-loaded PhotoImage. When the window is
+        # maximized, redraw the current monster using the
+        # newly calculated responsive size.
+        current_monster = getattr(app.game, "current_monster", None)
+        last_sprite_size = w.get("last_rendered_sprite_size")
+
+        if (
+            current_monster is not None
+            and last_sprite_size != new_sprite_size
+        ):
+            monster_name = current_monster[0]
+
+            sprites.draw_monster(
+                sprite_canvas,
+                monster_name,
+                new_sprite_size
+            )
+
+            w["last_rendered_sprite_size"] = new_sprite_size
 
         # =================================================
         # INFO FRAME
         # =================================================
 
         info_frame.place(
-            relx=0.42,
-            rely=0.5,
+            relx=0.52,
+            rely=0.52,
             anchor="w"
         )
 
@@ -970,11 +1029,23 @@ def _render_monster(app, monster):
     # DRAW PNG MONSTER
     # =====================================================
 
+    # Draw the GIF using the actual responsive monster area.
+    # Fall back to MONSTER_DRAW_SIZE during the first layout pass.
+    monster_size = w.get(
+        "current_sprite_size",
+        MONSTER_DRAW_SIZE
+    )
+
     sprites.draw_monster(
         canvas,
         name,
-        SPRITE_CANVAS_SIZE
+        monster_size
     )
+
+    # Remember the size actually used to render this GIF.
+    # update_layout() uses this to know when a maximize /
+    # restore operation requires the monster to be redrawn.
+    w["last_rendered_sprite_size"] = monster_size
 
 
 # =========================================================
@@ -1014,9 +1085,16 @@ def _use_candy(app):
 
     if app.game.use_candy():
 
-        _render_monster(
-            app,
-            app.game.current_monster
+        # Rare Candy changes only the difficulty.
+        # Do not reload the GIF; reloading all frames causes a pause.
+        monster = app.game.current_monster
+        _, difficulty, rarity, ability = monster
+
+        app.widgets["difficulty_label"].config(
+            text=(
+                "Capture Difficulty: "
+                + str(difficulty)
+            )
         )
 
         app.widgets["result_label"].config(
@@ -1076,8 +1154,9 @@ def _attempt_capture(app):
         app
     )
 
+    # Advance almost immediately after capture.
     app.root.after(
-        1500,
+        80,
         lambda: advance_round(
             app
         )
@@ -1107,8 +1186,9 @@ def _skip(app):
         app
     )
 
+    # Advance almost immediately after skip.
     app.root.after(
-        1200,
+        80,
         lambda: advance_round(
             app
         )
